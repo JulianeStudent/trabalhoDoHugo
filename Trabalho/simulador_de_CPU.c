@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+//Declaração de variáveis não global
 char memoria[154],
          ir,
          ro0,
@@ -17,8 +18,6 @@ int posicao = 0x00,
         c = 0;
 int main(int argc, char const *argv[])
 {
-    //Declaração de variáveis não global
-    
     //Zera a memória
     for (int cont = 0; cont < 154; cont++)
         memoria[cont] = 0;
@@ -33,9 +32,12 @@ int main(int argc, char const *argv[])
         temp = temp;
         memoria[posicao] = temp;
     }
+
+    //Passa o opcode para o IR
     pc = 0;
     mbr = memoria[pc];
     ir = mbr >> 3;
+    //verifica qual é o mnemônico
     if(ir >= 0x01 && ir <= 0x09 ){
         pc++;
         mbr = mbr << 8;
@@ -72,6 +74,7 @@ int main(int argc, char const *argv[])
     system("PAUSE");
 }
 
+//Imprime na tela todos os espaços de memória
 void printMemoria(char *memoria[]){
     int pular = 14;
     for (int cont = 0; cont < 154; cont++){
