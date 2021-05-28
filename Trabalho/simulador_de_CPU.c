@@ -70,12 +70,6 @@ int main(int argc, char const *argv[])
         printf("\nsou uma instrucao de 8 bits");
     }
     printf("\nIR: %i\n", ir);
-    printMemoria(memoria);
-    system("PAUSE");
-}
-
-//Imprime na tela todos os espaços de memória
-void printMemoria(char *memoria[]){
     int pular = 14;
     for (int cont = 0; cont < 154; cont++){
         if(cont == pular){
@@ -89,4 +83,5 @@ void printMemoria(char *memoria[]){
         else    
             printf("%x:   0x%x | ", cont, memoria[cont]);
     }
+    system("PAUSE");
 }
