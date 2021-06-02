@@ -25,22 +25,20 @@ int main(int argc, char const *argv[])
     system("cls");
     pc = 0;
     while(1){
-        mbr = 0;
-        ro0 = 0;
-        ro1 = 0;
         mbr = memoria[pc] & 0xff;
         ir = mbr >> 3;
         //Verifica qual é o opcode
-        if (ir == 0x00 || ir == 0x0A){//halt ou  not, 8 bits
-            if (ir == 0){
+        if (ir == 0x00 || ir == 0x0A){//instruções de 8 bits
+            if (ir == 0){//hlt; finaliza a execução do programa
                 printEstadoCpuMemoria(memoria, ir, ro0, ro1, mbr, mar, imm, pc, reg);
-                printf("\nTrabalho finalizado");
+                printf("\nTrabalho finalizado.\n");
+                printf("\033[1;33mTrabalho produzido por Juliane Karen e Guilherme Simoes.\033[0m");
                 break;
-            }else{
+            }else{//not regX; registrador lógico em que regX = regX
                 ro0 = (mbr << 29) >> 30;
                 reg[ro0] = reg[ro0];
             }
-        }else if(ir >= 0x01 && ir <= 0x09 ){//16 bits da instrução (1 a 9)
+        }else if(ir >= 0x01 && ir <= 0x09 ){//intruçoes de 16 bits
             pc++;
             mbr = mbr << 8;
             mbr = mbr | memoria[pc] & 0xff;
@@ -66,47 +64,47 @@ int main(int argc, char const *argv[])
                 reg[ro0] = (reg[ro0] / reg[ro1]) & 0xffff;
                 pc++;
 	        }
-            //comp regX, regY;
+            //comp regX, regY; compara regX e regY
         	if ( ir == 0x05){
-                if (reg[ro0] == reg[ro1]){
+                if (reg[ro0] == reg[ro1]){//regX = regY
                     e = 1;
                 }else{
                     e = 0;
                 }
-                if (reg[ro0] < reg[ro1]){
+                if (reg[ro0] < reg[ro1]){//regX < regY
                     l = 1;
                 }else{
                     l = 0;
                 }
-                if (reg[ro0] > reg[ro1]){
+                if (reg[ro0] > reg[ro1]){//regX > regY
                     g = 1;
                 }else{
                     g = 0;
                 }
                 pc++;
 	        }
-            //movr
+            //movr regX, regY; regX recebe o valor de regY
             if ( ir == 0x06){
                 reg[ro0] = reg[ro1] & 0xffff;
                 pc++;
 	        }
-            //and
+            //and regX, regY; regX recebe o resultado da soma do seu valor com regY
 	        if ( ir == 0x07){
                 reg[ro0] = (reg[ro0] & reg[ro1]) & 0xffff;
                 pc++;
 	        }
-            //or
+            //or regX, regY; regX recebe a comparação lógica do tipo or entre ele e regY
 	        if ( ir == 0x08){
                 reg[ro0] = (reg[ro0] | reg[ro1]) & 0xffff;
                 pc++;
 	        }
-            //xor
+            //xor regX, regY; regX recebe a comparação lógica do tipo xor entre ele e regY
             if ( ir == 0x09){
                 reg[ro0] = (reg[ro0] ^ reg[ro1]) & 0xffff;
                 pc++;
             }
-            
-        }else if(ir >= 0xB && ir <= 0x1A){//24 bits da instrução 11 a 26
+
+        }else if(ir >= 0xB && ir <= 0x1A){//instruçoes de 24 bits
             pc++;
             mbr = mbr << 8;
             mbr = mbr | memoria[pc] & 0xffff;
@@ -114,7 +112,7 @@ int main(int argc, char const *argv[])
             mbr = mbr << 8;
             mbr = mbr | memoria[pc] & 0xffffff;
             if (ir >= 0x0B && ir <= 0x11){
-                //je
+                //je M[X]; muda o PC para X se E = 1
                 if ( ir == 0x0B){
                     mar = mbr & 0xffff;
                     if ( e == 1 ) 
@@ -122,7 +120,7 @@ int main(int argc, char const *argv[])
                     else
                         pc++;
                 }
-                //jne
+                //jne M[X]; muda o PC para X se E = 0
                 if ( ir == 0x0C){
                     mar = mbr;
                     if ( e == 0 ) 
@@ -231,13 +229,15 @@ int main(int argc, char const *argv[])
                 }
             }
         }
+        //Mostra o estado da CPU e da Memória
         printEstadoCpuMemoria(memoria, ir, ro0, ro1, mbr, mar, imm, pc, reg);
         printf("\nPrecione uma tecla para iniciar o proximo ciclo de maquina ou aperte 'c' para finalizar o trabalho.");
         finalizar = getch();
         int valorAscii;
         valorAscii = finalizar;
         if(valorAscii == 67 || valorAscii == 99){
-            printf("\nTrabalho finalizado");
+            printf("\nTrabalho finalizado.\n");
+            printf("\033[1;33mTrabalho produzido por Juliane Karen e Guilherme Simoes.\033[0m");
             break;
         }else{
             system("cls");
@@ -246,19 +246,22 @@ int main(int argc, char const *argv[])
 }
 
 void printEstadoCpuMemoria(char memoria[],char ir,char ro0,char ro1, int mbr, short int mar, short int imm, short int pc, short int reg[]){
-    int pular = 12;
-    printf("CPU:\n");
-    printf("R0:  0x%x   R1:  0x%x     R2:  0x%x     R3: 0x%x\n", reg[0], reg[1], reg[2], reg[3]);
-    printf("MBR: 0x%x   MAR: 0x%x     IMM: 0x%x     PC: 0x%x\n", mbr, mar, imm, pc);
-    printf("IR:  0x%x   RO0: 0x%x     RO1: 0x%x\n", ir, ro0, ro1);
-    printf("MEMORIA:\n");
+    int pular = 7;
+    printf("\033[1;33mCPU:\033[0m\n");
+    printf("R0:  0x\033[1;32m%x\033[0m   R1:  0x\033[1;32m%x\033[0m     R2:  0x\033[1;32m%x\033[0m     R3: 0x\033[1;32m%x\033[0m\n", reg[0], reg[1], reg[2], reg[3]);
+    printf("MBR: 0x\033[1;32m%x\033[0m   MAR: 0x\033[1;32m%x\033[0m     IMM: 0x\033[1;32m%x\033[0m     PC: 0x\033[1;32m%x\033[0m\n", mbr, mar, imm, pc);
+    printf("IR:  0x\033[1;32m%x\033[0m   RO0: 0x\033[1;32m%x\033[0m     RO1: 0x\033[1;32m%x\033[0m\n", ir, ro0, ro1);
+    printf("\033[1;33mMEMORIA:\033[0m\n");
     for (int cont = 0; cont < 154; cont++){
         if(cont == pular){
             printf("\n");
-            pular = pular + 12;
+            pular = pular + 7;
         }
         if(cont <= 15)
             printf("0");
-        printf("%x:  0x%x   | ", cont, memoria[cont] & 0xff);
+        if((memoria[cont] & 0xff) <= 0xf)
+            printf("%x: 0x\033[1;36m0%x\033[0m | ", cont, memoria[cont] & 0xff);
+        else
+            printf("%x: 0x\033[1;36m%x\033[0m | ", cont, memoria[cont] & 0xff);
     }
 }
